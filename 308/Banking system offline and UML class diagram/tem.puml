@@ -1,0 +1,102 @@
+@startuml
+class Employee.Cashier {
++ <<Create>> Cashier(String)
+}
+abstract class Employee.Employee {
+- String name
++ <<Create>> Employee(String)
++ void lookup(String)
++ void approveLoan(Accounts,double)
++ void change_interest_rate(String,double)
++ void getInternalFund()
++ String getName()
+}
+class Employee.Managing_director {
++ <<Create>> Managing_director(String)
++ void approveLoan(Accounts,Integer)
++ void change_interest_rate(String,double)
++ void getInternalFund()
+}
+class Bank.Bank {
+- {static} ArrayList<Accounts> all_clients
+- ArrayList<Employee> all_employees
+- Accounts active_client
+- Employee active_employee
+- {static} double internal_fund
+- Integer current_time
+- ArrayList<LoanData> loan_requests
++ <<Create>> Bank()
++ void serve(String)
+- void approvePendingRequests()
+- void deductCharge()
+- void doBalanceIncrement()
+- void doLoanDecrement()
++ void activeEmployee(Employee)
++ void closeEmployee()
++ void closeClient()
+- void addToLoanRequests(double)
++ void activeAccount(String)
++ Accounts openNewAccount(String,String,double)
++ {static} ArrayList<Accounts> getAll_clients()
++ {static} double getInternal_fund()
+}
+class Employee.Officer {
++ <<Create>> Officer(String)
++ void approveLoan(Accounts,double)
+}
+class Accounts.Student_account {
++ <<Create>> Student_account(String,double,Integer)
++ void withdraw(double,Integer)
+}
+class Main {
++ {static} void main(String[])
+}
+class Accounts.Savings_account {
++ <<Create>> Savings_account(String,double,Integer)
++ void withdraw(double,Integer)
+}
+abstract class Accounts.Accounts {
+~ String name
+~ double balance
+~ double loan
+~ Integer time
+# {static} double interest_rate
+# {static} double loan_interest
+~ double yearly_charge
++ <<Create>> Accounts(String,double,Integer)
++ {static} void setLoan_interest(double)
++ void deposit(double)
++ void withdraw(double)
++ void addLoan(double)
++ void query()
++ String getAccountType()
++ String getName()
++ double getBalance()
++ void applyInterestOnLoan()
++ void applyInterestOnDeposit()
++ {static} void setInterest_rate(double)
++ void decrementServiceCharge()
++ void withdraw(double,Integer)
+}
+class Bank.LoanData {
+- Accounts client
+- Double loan_asked
++ <<Create>> LoanData(Accounts,Double)
++ Accounts getClient()
++ double getLoan_asked()
+}
+class Accounts.Fixed_account {
+~ Integer time_period
++ <<Create>> Fixed_account(String,double,Integer,Integer)
++ void deposit(double)
++ void withdraw(double,Integer)
+}
+
+
+Employee.Employee <|-- Employee.Cashier
+Employee.Employee <|-- Employee.Managing_director
+Employee.Employee <|-- Employee.Officer
+Accounts.Accounts <|-- Accounts.Student_account
+Accounts.Accounts <|-- Accounts.Savings_account
+Accounts.Accounts <|-- Accounts.Fixed_account
+@enduml
