@@ -48,19 +48,18 @@ class ScopeTable{
     string id;
 
 
-    unsigned int SDBMHash(const string &str) {
-        unsigned int hash = 0;
+    unsigned long long SDBMHash(const string &str) {
+        unsigned long long hash = 0;
         unsigned int i = 0;
         unsigned int len = str.length();
 
         for (i = 0; i < len; i++) {
-            hash = ((str[i]) + (hash << 6) + (hash << 16) - hash) % total_buckets;
+            hash = ((str[i]) + (hash << 6) + (hash << 16) - hash);
         }
-
         return hash;
     }
     unsigned int hashFunct(const string &str){
-        return SDBMHash(str)%total_buckets;
+        return (int)(SDBMHash(str)%total_buckets);
     }
 public:
     ScopeTable(int bucket_count,ScopeTable* parent){
@@ -169,7 +168,7 @@ public:
                 secondIndex++;
             }
             if(temp == NULL){
-                cout<<"\t"<<" Not found in the current ScopeTable# "<<id<<endl;
+                cout<<"\t"<<"Not found in the current ScopeTable# "<<id<<endl;
                 return false;
             }
             else{

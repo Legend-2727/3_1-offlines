@@ -1,10 +1,10 @@
-#include "SymbolTable.h"
-#include <sstream>
+#include "2005042_SymbolTable.h"
+
 
 int split(string line,string word[]){
     int i = 0,j=0;
     while(line[i]==' ') i++;
-    while (i<line.size()) {
+    while (i<line.length()) {
         if(line[i]==' ')
         {
             j++;
@@ -17,8 +17,8 @@ int split(string line,string word[]){
     return j+1;  
 }
 int main(){
-    freopen("in.txt","r",stdin);
-    freopen("out.txt","w",stdout);
+    freopen("input.txt","r",stdin);
+    freopen("output.txt","w",stdout);
     string command;
     int bucketCount;
     cin>>bucketCount;
@@ -90,6 +90,9 @@ int main(){
         }
         else if(word[0]=="Q"){
             break;
+        }
+        else{
+            cout<<"Command not recognized: "<<word[0]<<endl;
         }
     }
 }
