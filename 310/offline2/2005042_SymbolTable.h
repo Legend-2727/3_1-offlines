@@ -2,7 +2,6 @@
 #include<fstream>
 #include<iostream>
 using namespace std;
-const char* output = "output.txt";
 
 class SymbolInfo{
     string name;
@@ -48,18 +47,18 @@ class ScopeTable{
     string id;
 
 
-    unsigned long SDBMHash(const string &str) {
-        unsigned long hash = 0;
+    unsigned long long SDBMHash(const string &str) {
+        unsigned long long hash = 0;
         unsigned int i = 0;
         unsigned int len = str.length();
 
         for (i = 0; i < len; i++) {
             hash = ((str[i]) + (hash << 6) + (hash << 16) - hash);
         }
-        return hash;
+        return hash%total_buckets;
     }
     unsigned int hashFunct(const string &str){
-        return (int)(SDBMHash(str)%total_buckets);
+        return (int)SDBMHash(str)%total_buckets;
     }
 public:
     ScopeTable(int bucket_count,ScopeTable* parent){
@@ -71,10 +70,10 @@ public:
             arrSymbolInfo[i]=NULL;
         }
         setId(parent);
-        cout<<"\tScopeTable# "<<id<<" created\n";
+        //out<<"\tScopeTable# "<<id<<" created\n";
     }
     
-    bool insert(string name,string type){
+    bool insert(string name,string type,ofstream &out){
         
         int index=hashFunct(name);
         if(arrSymbolInfo[index]!=NULL){
@@ -83,9 +82,9 @@ public:
             prevTemp=arrSymbolInfo[index];
             int secondIndex=1;
             while(temp != NULL){
-                if(temp->getName()==name && temp->getType()==type){
-                    cout<<"\t'"<<name<<"'"
-                    <<" already exists in the current ScopeTable# "<<id<<'\n';
+                if(temp->getName()==name){
+                    out<<"\t"<<name
+                    <<" already exists in the current ScopeTable"<<'\n';
                     return false;
                 }
                 prevTemp=temp;
@@ -93,13 +92,13 @@ public:
                 secondIndex++;
             }
             prevTemp->setNextPointer(new SymbolInfo(name,type));
-            cout<<"\tInserted  at position <"<<index+1<<", "<<secondIndex
-            <<"> of ScopeTable# "<<id<<'\n';
+            //out<<"\tInserted  at position <"<<index+1<<", "<<secondIndex
+            //<<"> of ScopeTable# "<<id<<'\n';
             return true;
         }
         else{
             arrSymbolInfo[index]= new SymbolInfo(name,type);
-            cout<<"\tInserted  at position <"<<index+1<<", 1> of ScopeTable# "<<id<<'\n';
+            //out<<"\tInserted  at position <"<<index+1<<", 1> of ScopeTable# "<<id<<'\n';
             return true;
         }
     }
@@ -123,14 +122,14 @@ public:
     void increaseChildCount(){
         childCount+=1;
     }
-    SymbolInfo* lookUp(string name){
+    SymbolInfo* lookUp(string name,ofstream &out){
         
         int index=hashFunct(name);
         SymbolInfo *temp=arrSymbolInfo[index];
         int secondIndex=1;
         while (temp != NULL) {
             if (temp->getName()==name) {
-                cout<<"\t'"<<name<<"'"
+                out<<"\t'"<<name<<"'"
                 <<" found at position <"<<index+1<<", "<<secondIndex
                 <<"> of ScopeTable# "<<id<<'\n';
                 return temp;
@@ -138,23 +137,23 @@ public:
             temp = temp->getNextPointer();
             secondIndex++;
         }
-        //cout<<"\t'"<<name<<"' is not found in any of the ScopeTables."<<endl;
+        //out<<"\t'"<<name<<"' is not found in any of the ScopeTables."<<endl;
         return NULL;
     }
 
-    bool Delete(string name){
+    bool Delete(string name,ofstream &out){
         int index=hashFunct(name);
         SymbolInfo *temp=arrSymbolInfo[index];
         SymbolInfo *prevTemp=NULL;
         int secondIndex=1;
 
         if(temp==NULL){
-            cout<<"\t"<<"Not found in the current ScopeTable# "<<id<<endl;
+            out<<"\t"<<"Not found in the current ScopeTable# "<<id<<endl;
             return false;
         }
         else if(temp->getName()==name){
             arrSymbolInfo[index]=temp->getNextPointer();
-            cout<<"\tDeleted '"<<name<<"' from position <"
+            out<<"\tDeleted '"<<name<<"' from position <"
             <<index+1<<", "<<secondIndex<<"> of ScopeTable# "<<id<<'\n';
             delete temp;
             return true;
@@ -168,12 +167,12 @@ public:
                 secondIndex++;
             }
             if(temp == NULL){
-                cout<<"\t"<<"Not found in the current ScopeTable# "<<id<<endl;
+                out<<"\t"<<" Not found in the current ScopeTable# "<<id<<endl;
                 return false;
             }
             else{
                 prevTemp->setNextPointer(temp->getNextPointer());
-                cout<<"\tDeleted '"<<name<<"' from position <"
+                out<<"\tDeleted '"<<name<<"' from position <"
                 <<index+1<<", "<<secondIndex<<"> of ScopeTable# "<<id<<'\n';
                 delete temp;
                 return true;
@@ -185,7 +184,7 @@ public:
         //             prevTemp->setNextPointer(temp->getNextPointer());
         //         delete temp;
         //         temp=NULL;
-        //         cout<<"\tDeleted '"<<name<<"' from position <"
+        //         out<<"\tDeleted '"<<name<<"' from position <"
         //         <<index+1<<", "<<secondIndex<<"> of ScopeTable# "<<id<<'\n';
         //         return true;
         //     }
@@ -193,20 +192,20 @@ public:
         //     temp=temp->getNextPointer();
         //     secondIndex++;
         // }
-        // cout<<"\t'"<<name<<"' is not present in this ScopeTable# "<<id<<endl;
+        // out<<"\t'"<<name<<"' is not present in this ScopeTable# "<<id<<endl;
         // return false;
     }
 
-    void print(){
-        cout<<"\tScopeTable# "<<id<<'\n';
+    void print(ofstream &out){
+        out<<"\tScopeTable# "<<id<<'\n';
         for(int i=0;i<total_buckets;i++){
-            cout<<'\t'<<i+1;
+            out<<'\t'<<i+1;
             SymbolInfo *temp=arrSymbolInfo[i];
             while (temp!=NULL) {
-                cout<<" -->"<<" ("<<temp->getName()<<","<<temp->getType()<<")";
+                out<<" -->"<<" ("<<temp->getName()<<","<<temp->getType()<<")";
                 temp=temp->getNextPointer();
             }
-            cout<<"\n";
+            out<<"\n";
         }
     }
     void setParentScope(ScopeTable * parent){
@@ -227,7 +226,7 @@ public:
             }
         }
         delete [] arrSymbolInfo;
-        cout<<"\tScopeTable# "<<id<<" deleted"<<'\n';
+        //out<<"\tScopeTable# "<<id<<" deleted"<<'\n';
     }
 };
 
@@ -253,44 +252,44 @@ public:
     void exitScope(){
         ScopeTable *temp=currScopeTable;
         if(temp->getParentScope()==NULL){
-            cout<<"\tScopeTable# "<<temp->getID()<<" cannot be deleted\n";
+            //out<<"\tScopeTable# "<<temp->getID()<<" cannot be deleted\n";
             return;
         }
         currScopeTable=currScopeTable->getParentScope();
         delete temp;
     }
-    bool insert(string name,string type){
+    bool insert(string name,string type,ofstream &out){
         if(currScopeTable==NULL){
             enterScope();
         }
-        return currScopeTable->insert(name,type);
+        return currScopeTable->insert(name,type,out);
     }
-    bool Delete(string name){
-        return currScopeTable->Delete(name);
+    bool Delete(string name,ofstream &out){
+        return currScopeTable->Delete(name,out);
     }
-    SymbolInfo* lookup(string name){
+    SymbolInfo* lookup(string name,ofstream &out){
         ScopeTable* temp=currScopeTable;
         SymbolInfo* tempSymbol;
         while(true){
-            tempSymbol=temp->lookUp(name);
+            tempSymbol=temp->lookUp(name,out);
             if(tempSymbol!=NULL){
                 return tempSymbol;
             }
             if(temp->getParentScope() == NULL){
-                cout<<"\t'"<<name<<"' not found in any of the ScopeTables"<<endl;
+                out<<"\t'"<<name<<"' not found in any of the ScopeTables"<<endl;
                 return NULL;
             }
             temp=temp->getParentScope();
         }
     }
-    void printCurrScope(){
-        currScopeTable->print();
+    void printCurrScope(ofstream &out){
+        currScopeTable->print(out);
     }
-    void printAllScope(){
+    void printAllScope(ofstream &out){
         ScopeTable* temp=currScopeTable;
         while (temp != NULL){
-            //cout<<"\tScopeTable# "<<temp->getID()<<'\n';
-            temp->print();
+            //out<<"\tScopeTable# "<<temp->getID()<<'\n';
+            temp->print(out);
             temp = temp -> getParentScope();
         }
     }

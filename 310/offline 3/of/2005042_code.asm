@@ -1,0 +1,347 @@
+.MODEL SMALL
+.STACK 1000H
+.Data
+	CR EQU 0DH
+	LF EQU 0AH
+	number DB "00000$"
+
+	;Line no: 1
+	i DW 1 DUP (0000H)
+	j DW 1 DUP (0000H)
+.CODE
+main PROC
+	MOV AX, @DATA
+	MOV DS,AX
+	PUSH BP
+	MOV BP,SP
+
+	;Line no: 4
+	SUB SP,2
+	SUB SP,2
+	SUB SP,2
+	SUB SP,2
+	SUB SP,2
+	SUB SP,2
+
+	;Line no: 4
+	MOV AX,1
+	;Line No: 6
+	PUSH AX
+	POP AX 
+	MOV i,AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, i
+	PUSH AX
+	CALL print_output
+	CALL new_line
+	POP AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX,5
+	;Line No: 9
+	PUSH AX
+	MOV AX,8
+	;Line No: 9
+	PUSH AX
+	POP BX
+	POP AX
+	ADD AX,BX
+	PUSH AX
+	POP AX 
+	MOV j,AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, j
+	PUSH AX
+	CALL print_output
+	CALL new_line
+	POP AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, i
+	PUSH AX
+	MOV AX,2
+	;Line No: 12
+	PUSH AX
+	MOV AX, j
+	PUSH AX
+	POP CX
+	POP AX
+	CWD
+	IMUL CX
+	PUSH AX
+	POP BX
+	POP AX
+	ADD AX,BX
+	PUSH AX
+	POP AX 
+	MOV [BP - 2],AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 2]
+	PUSH AX
+	CALL print_output
+	CALL new_line
+	POP AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 2]
+	PUSH AX
+	MOV AX,9
+	;Line No: 15
+	PUSH AX
+	POP CX
+	POP AX
+	CWD
+	IDIV CX
+	PUSH DX
+	POP AX 
+	MOV [BP - 6],AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 6]
+	PUSH AX
+	CALL print_output
+	CALL new_line
+	POP AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 6]
+	PUSH AX
+	MOV AX, [BP - 4]
+	PUSH AX
+	POP AX
+	MOV BX,AX
+	POP AX
+	CMP AX,BX
+	JLE  Label1
+	MOV AX,0
+	PUSH AX
+	JMP EndLabel1
+Label1:
+	MOV AX,1
+	PUSH AX
+EndLabel1:
+	POP AX 
+	MOV [BP - 8],AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 8]
+	PUSH AX
+	CALL print_output
+	CALL new_line
+	POP AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, i
+	PUSH AX
+	MOV AX, j
+	PUSH AX
+	POP AX
+	MOV BX,AX
+	POP AX
+	CMP AX,BX
+	JNE  Label2
+	MOV AX,0
+	PUSH AX
+	JMP EndLabel2
+Label2:
+	MOV AX,1
+	PUSH AX
+EndLabel2:
+	POP AX 
+	MOV [BP - 10],AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 10]
+	PUSH AX
+	CALL print_output
+	CALL new_line
+	POP AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 8]
+	PUSH AX
+	MOV AX, [BP - 10]
+	PUSH AX
+	POP AX
+	CMP AX,1
+	JGE Label3:
+	POP AX
+	CMP AX,1
+	JL Label4:
+Label3:
+	MOV AX,1
+	PUSH AX
+	JMP EndLabel4
+Label4:
+	MOV AX,0
+	PUSH AX
+EndLabel4:
+	POP AX 
+	MOV [BP - 12],AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 12]
+	PUSH AX
+	CALL print_output
+	CALL new_line
+	POP AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 8]
+	PUSH AX
+	MOV AX, [BP - 10]
+	PUSH AX
+	POP AX
+	CMP AX,1
+	JL Label5:
+	POP AX
+	CMP AX,1
+	JGE Label6:
+Label5:
+	MOV AX,0
+	PUSH AX
+	JMP EndLabel6
+Label6:
+	MOV AX,1
+	PUSH AX
+EndLabel6:
+	POP AX 
+	MOV [BP - 12],AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 12]
+	PUSH AX
+	CALL print_output
+	CALL new_line
+	POP AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 12]
+	PUSH AX
+	MOV AX, [BP - 12]
+	INC AX
+	MOV [BP - 12],AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 12]
+	PUSH AX
+	CALL print_output
+	CALL new_line
+	POP AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 12]
+	PUSH AX
+	POP AX
+	NEG AX
+	PUSH AX
+	POP AX 
+	MOV [BP - 2],AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	MOV AX, [BP - 2]
+	PUSH AX
+	CALL print_output
+	CALL new_line
+	POP AX
+	PUSH AX
+	POP AX
+
+	;Line no: 4
+	ADD SP,12
+	POP BP
+	MOV AX,4CH
+	INT 21H
+main ENDP
+new_line proc
+	push ax
+	push dx
+	mov ah,2
+	mov dl,0Dh
+	int 21h
+	mov ah,2
+	mov dl,0Ah
+	int 21h
+	pop dx
+	pop ax
+	ret
+new_line endp
+print_output proc
+	push ax
+	push bx
+	push cx
+	push dx
+	push si
+	lea si,number
+	mov bx,10
+	add si,4
+	cmp ax,0
+	jnge negate
+print:
+	xor dx,dx
+	div bx
+	mov [si],dl
+	add [si],'0'
+	dec si
+	cmp ax,0
+	jne print
+	inc si
+	lea dx,si
+	mov ah,9
+	int 21h
+	pop si
+	pop dx
+	pop cx
+	pop bx
+	pop ax
+	ret
+negate:
+	push ax
+	mov ah,2
+	mov dl,'-'
+	int 21h
+	pop ax
+	neg ax
+	jmp print
+print_output endp
+END main
